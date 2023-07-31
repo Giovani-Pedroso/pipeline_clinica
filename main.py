@@ -1,47 +1,19 @@
-from a.test import t 
-import sqlite3
 import os
+from reports.main import Relatorio
+from clinica.analise import AnaliseClinica
+from concorrentes.analise import AnaliseConcorrentes
 from dotenv import load_dotenv 
 load_dotenv()
 
 DB_PATH = os.getenv('DB_PATH')
 PLANINHA_PATH = os.getenv('PLANINHA_CLIENTES')
-db = sqlite3.connect(DB_PATH)
+PATH_REPORT = os.getenv('PATH_REPORT')
 
-cursor = db.cursor()
+analise_clinica = AnaliseClinica(PLANINHA_PATH)
+analise_concorrentes = AnaliseConcorrentes(DB_PATH)
 
-# Create a table
-#It was already created
-# cursor.execute("""
-#         CREATE TABLE customers (
-#             first_name TEXT,
-#             last_name TEXT,
-#             email TEXT)
-#         """)
+relatorio = Relatorio(f"{PATH_REPORT}/test.pdf", 
+                        analise_clinica,
+                        analise_concorrentes)
 
-#Adding one entry
-# cursor.execute("""
-#                INSERT INTO customers VALUES ('Maria', 'Oliveire', 'js@email.com')
-#                """)
-
-#Adding many entries 
-# many_customers = [
-#         ("a","aa","aa@email.com"),
-#         ("d","dd","dd@email.com"),
-#         ("c","cc","cc@email.com"),
-#         ("b","bb","bb@email.com"),
-#         ]
-#
-# cursor.executemany("INSERT INTO customers VALUES(?,?,?)", many_customers)
-
-# cursor.execute("SELECT * FROM customers")
-# cursor.execute("SELECT * FROM customers")
-# # print(cursor.fetchone())
-# cursor.fetcmany(3)
-#get the data of the last query execulted
-# data = cursor.fetchall()
-# print(data)
-
-#Commit the comand
-db.commit()
-db.close()
+relatorio.generatePDF()
